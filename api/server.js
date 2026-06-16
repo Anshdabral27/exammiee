@@ -46,7 +46,13 @@ async function initDb() {
         }
 
         // Connect directly to the specified database (works for both local and cloud)
-        pool = mysql.createPool(dbConfig);
+        pool = mysql.createPool({
+            ...dbConfig,
+            connectTimeout: 10000,  // 10 second timeout
+            waitForConnections: true,
+            connectionLimit: 3,
+            queueLimit: 0
+        });
         // Test connection
         await pool.query('SELECT 1');
         console.log('Connected to MySQL database.');
