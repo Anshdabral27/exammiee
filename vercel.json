@@ -12,7 +12,16 @@
       "dest": "server.js"
     },
     {
-      "handle": "filesystem"
+      "src": "/index.html",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/Doon_University_logo.png",
+      "dest": "/Doon_University_logo.png"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
     },
     {
       "src": "/(.*)",
