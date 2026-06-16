@@ -30,20 +30,25 @@ let pool;
 
 async function initDb() {
     try {
-        // First connect without database to create it if it doesn't exist
-        const connection = await mysql.createConnection({
-            host: dbConfig.host,
-            user: dbConfig.user,
-            password: dbConfig.password,
-            port: dbConfig.port,
-            ssl: dbConfig.ssl
-        });
-        
-        await connection.query('CREATE DATABASE IF NOT EXISTS exammiee_db');
-        await connection.end();
+        const isCloud = process.env.DB_HOST && process.env.DB_HOST !== 'localhost';
 
-        // Now connect to the database
+        if (!isCloud) {
+            // Local only: create DB if it doesn't exist
+            const connection = await mysql.createConnection({
+                host: dbConfig.host,
+                user: dbConfig.user,
+                password: dbConfig.password,
+                port: dbConfig.port,
+                ssl: dbConfig.ssl
+            });
+            await connection.query('CREATE DATABASE IF NOT EXISTS exammiee_db');
+            await connection.end();
+        }
+
+        // Connect directly to the specified database (works for both local and cloud)
         pool = mysql.createPool(dbConfig);
+        // Test connection
+        await pool.query('SELECT 1');
         console.log('Connected to MySQL database.');
 
         // Initialize schema
