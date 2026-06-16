@@ -1,7 +1,16 @@
 {
+  "functions": {
+    "api/server.js": {
+      "includeFiles": "index.html Doon_University_logo.png"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
+      "destination": "/api/server.js"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/api/server.js"
     }
   ]

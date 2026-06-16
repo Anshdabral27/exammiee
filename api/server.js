@@ -10,6 +10,10 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 const path = require('path');
 app.use(express.static(path.join(__dirname, '..'))); // Serve static files from parent directory
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'index.html'));
+});
+
 // Database configuration
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
