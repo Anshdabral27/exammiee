@@ -193,9 +193,34 @@ async function initDb() {
 
 // API Routes
 
+// Health check - shows DB connection status
+app.get('/api/health', async (req, res) => {
+    const status = {
+        db_connected: false,
+        db_host: process.env.DB_HOST || '(not set)',
+        db_name: process.env.DB_NAME || '(not set)',
+        db_port: process.env.DB_PORT || '(not set)',
+        db_user: process.env.DB_USER || '(not set)',
+        pool_ready: !!pool,
+        error: null
+    };
+    try {
+        if (pool) {
+            await pool.query('SELECT 1');
+            status.db_connected = true;
+        }
+    } catch (err) {
+        status.error = err.message;
+    }
+    res.json(status);
+});
+
 // Login
 app.post('/api/login', async (req, res) => {
     const { id, pass, role } = req.body;
+    if (!pool) {
+        return res.status(503).json({ success: false, message: 'Database not connected. Check Vercel env vars (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT).' });
+    }
     try {
         const [rows] = await pool.query('SELECT * FROM users WHERE id = ? AND password = ? AND role = ?', [id, pass, role]);
         if (rows.length > 0) {
@@ -204,7 +229,7 @@ app.post('/api/login', async (req, res) => {
             res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ success: false, message: 'DB query error: ' + err.message });
     }
 });
 
