@@ -2,9 +2,9 @@
   "name": "exammiee-backend",
   "version": "1.0.0",
   "description": "Backend for Exammiee",
-  "main": "server.js",
+  "main": "api/server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node api/server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
