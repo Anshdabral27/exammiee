@@ -20,7 +20,10 @@ const dbConfig = {
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'password',
     database: process.env.DB_NAME || 'exammiee_db',
-    port: process.env.DB_PORT || 3306
+    port: parseInt(process.env.DB_PORT) || 3306,
+    ssl: process.env.DB_HOST && process.env.DB_HOST !== 'localhost'
+        ? { rejectUnauthorized: false }
+        : false
 };
 
 let pool;
@@ -31,7 +34,9 @@ async function initDb() {
         const connection = await mysql.createConnection({
             host: dbConfig.host,
             user: dbConfig.user,
-            password: dbConfig.password
+            password: dbConfig.password,
+            port: dbConfig.port,
+            ssl: dbConfig.ssl
         });
         
         await connection.query('CREATE DATABASE IF NOT EXISTS exammiee_db');
